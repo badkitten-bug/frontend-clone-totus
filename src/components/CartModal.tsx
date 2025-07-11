@@ -18,8 +18,8 @@ const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
   const handlePay = async () => {
     setIsProcessing(true);
     
-    // Simular proceso de pago
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Simular proceso de pago (0.5 segundos)
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     // Simular pago exitoso (90% de éxito)
     const isSuccess = Math.random() > 0.1;
