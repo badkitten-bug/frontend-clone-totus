@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Header from '../components/Header';
 import CategoryMenu from '../components/CategoryMenu';
 import Footer from '../components/Footer';
+import { CartProvider } from '../components/CartContext';
 
 export const metadata: Metadata = {
   title: 'Tottus Clone',
@@ -17,10 +18,12 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body>
-        <Header />
-        <CategoryMenu />
-        <main style={{ minHeight: '70vh' }}>{children}</main>
-        <Footer />
+        <CartProvider>
+          <Header />
+          <CategoryMenu />
+          <main style={{ minHeight: '70vh' }}>{children}</main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );

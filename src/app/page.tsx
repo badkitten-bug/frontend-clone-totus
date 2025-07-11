@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import BannerCarousel from '../components/BannerCarousel';
+import OffersSection from '../components/OffersSection';
 import { getProducts, API_URL } from '../services/api';
 
 interface Product {
@@ -54,6 +55,7 @@ export default function Home() {
           })}
         </div>
       </section>
+      <OffersSection products={productos} />
     </div>
   );
 }
