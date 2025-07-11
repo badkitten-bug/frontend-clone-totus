@@ -4,20 +4,18 @@ import Loader from './Loader';
 
 interface Product {
   id: number;
-  attributes?: {
-    name: string;
-    price: number;
-    sale_price?: number;
-    is_on_sale?: boolean;
-    image?: {
-      data?: {
-        attributes?: {
-          url: string;
-          formats?: {
-            medium?: { url: string };
-            small?: { url: string };
-            thumbnail?: { url: string };
-          };
+  name: string;
+  price: number;
+  sale_price?: number;
+  is_on_sale?: boolean;
+  image?: {
+    data?: {
+      attributes?: {
+        url: string;
+        formats?: {
+          medium?: { url: string };
+          small?: { url: string };
+          thumbnail?: { url: string };
         };
       };
     };
@@ -40,8 +38,7 @@ const OffersSection: React.FC<OffersSectionProps> = ({ products, loading }) => {
       ) : (
         <div className="flex gap-6 overflow-x-auto pb-4">
           {products.slice(0, 4).map((prod) => {
-            if (!prod?.attributes) return null;
-            const imgAttr = prod?.attributes?.image?.data?.attributes;
+            const imgAttr = prod?.image?.data?.attributes;
             const imageUrl =
               imgAttr?.formats?.medium?.url
                 ? API_URL.replace("/api", "") + imgAttr.formats.medium.url
@@ -52,14 +49,14 @@ const OffersSection: React.FC<OffersSectionProps> = ({ products, loading }) => {
               <div key={prod.id} className="min-w-[220px] bg-white rounded-xl shadow-md p-4 flex flex-col items-center text-center hover:shadow-lg transition">
                 <img
                   src={imageUrl}
-                  alt={prod.attributes.name}
+                  alt={prod.name}
                   className="max-h-32 mb-3 object-contain rounded"
                 />
-                <div className="font-bold text-base mb-1 line-clamp-2">{prod.attributes.name}</div>
+                <div className="font-bold text-base mb-1 line-clamp-2">{prod.name}</div>
                 <div className="text-[#7bb420] font-bold text-base mb-1">
-                  {prod.attributes.sale_price !== undefined
-                    ? <><span className="line-through text-gray-400 mr-2">S/ {prod.attributes.price}</span> S/ {prod.attributes.sale_price}</>
-                    : <>S/ {prod.attributes.price}</>
+                  {prod.sale_price !== undefined
+                    ? <><span className="line-through text-gray-400 mr-2">S/ {prod.price}</span> S/ {prod.sale_price}</>
+                    : <>S/ {prod.price}</>
                   }
                 </div>
               </div>
