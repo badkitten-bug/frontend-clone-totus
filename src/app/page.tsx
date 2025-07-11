@@ -30,12 +30,73 @@ interface Product {
 export default function Home() {
   const [destacados, setDestacados] = useState<Product[]>([]);
   const [ofertas, setOfertas] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { addToCart } = useCart();
 
   useEffect(() => {
-    getFeaturedProducts().then(setDestacados);
-    getSaleProducts().then(setOfertas);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const [destacadosData, ofertasData] = await Promise.allSettled([
+          getFeaturedProducts(),
+          getSaleProducts()
+        ]);
+
+        if (destacadosData.status === 'fulfilled') {
+          setDestacados(destacadosData.value || []);
+        } else {
+          console.error('Error fetching featured products:', destacadosData.reason);
+          setDestacados([]);
+        }
+
+        if (ofertasData.status === 'fulfilled') {
+          setOfertas(ofertasData.value || []);
+        } else {
+          console.error('Error fetching sale products:', ofertasData.reason);
+          setOfertas([]);
+        }
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError('Error al cargar los productos');
+        setDestacados([]);
+        setOfertas([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7bb420] mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando productos...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-[#7bb420] text-white px-4 py-2 rounded hover:bg-[#6aa11c]"
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -43,7 +104,7 @@ export default function Home() {
       <section className="max-w-6xl mx-auto px-4 my-10">
         <h2 className="font-bold text-2xl mb-8">Destacados de la Semana</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {destacados.map((prod) => {
+          {destacados && destacados.length > 0 ? destacados.map((prod) => {
             if (!prod?.attributes) return null;
             const imgAttr = prod?.attributes?.image?.data?.attributes;
             const imageUrl =
@@ -78,10 +139,14 @@ export default function Home() {
                 </button>
               </div>
             );
-          })}
+          }) : (
+            <div className="col-span-full text-center py-8">
+              <p className="text-gray-500">No hay productos destacados disponibles</p>
+            </div>
+          )}
         </div>
       </section>
-      <OffersSection products={ofertas} />
+      <OffersSection products={ofertas || []} />
     </div>
   );
 }
