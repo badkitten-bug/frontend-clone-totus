@@ -4,9 +4,8 @@ import { getCategories } from '../services/api';
 
 interface Category {
   id: number;
-  attributes?: {
-    name: string;
-  };
+  name: string;
+  description?: string;
 }
 
 const CategoryMenu = () => {
@@ -23,8 +22,9 @@ const CategoryMenu = () => {
           <button
             key={cat.id}
             className="bg-[#7bb420] text-white font-bold rounded px-5 py-2 hover:bg-[#6aa11c] transition"
+            title={cat.description}
           >
-            {cat.attributes?.name}
+            {cat.name}
           </button>
         ))}
       </div>
